@@ -1,0 +1,6 @@
+# vscode env
+.vscode
+
+# Compiled files
+*.o
+main
