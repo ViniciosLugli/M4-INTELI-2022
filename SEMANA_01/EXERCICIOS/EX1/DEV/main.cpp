@@ -1,100 +1,211 @@
 #include <iostream>
 #include <string>
+
+// Definindo o tipo de execução
+#define DEBUG
+
+// define funções para debug
+#ifdef DEBUG
+	#define DBG_INFO(...) printf("INFO: " __VA_ARGS__)
+#else
+	#define DBG_INFO(...)
+#endif
+
+// usa o namespace std para não precisar acessar o namespace em cada chamada
 using namespace std;
 
+// variavel global
 char *direcoes[4] = {(char *)"Direita", (char *)"Esquerda", (char *)"Frente", (char *)"Tras"};
 
-int converteSensor(int valor, int min, int max) {
-	/*
-	exemplo: converteSensor(30, 0, 100) = 30
-	calculo para normalizar e converter para o intervalo:
-	(30 - 0) * 100 / (100 - 0) = percentual
-	(30 - 0) * 100 / 100 = percentual
-	30 * 100 / 100 = percentual
-	30 = percentual
-	*/
-	return (valor - min) * 100 / (max - min);
-}
-
-int leSensor(char *sensor) {
-	int valor;                                              // valor lido do sensor
-	cout << "Digite o valor do sensor " << sensor << ": ";  // pede para o usuário digitar o valor do sensor
-	cin >> valor;                                           // lê o valor do sensor(entrada do usuário)
-	return valor;                                           // retorna o valor lido
-}
-
-bool leComando() {
-	char resposta;                                         // resposta do usuário
-	std::cout << "Deseja continuar o mapeamento? (s/n) ";  // mensagem para o usuário
-	std::cin >> resposta;                                  // leitura da resposta do usuário
-	return resposta == 's';                                // retorna verdadeiro se a resposta for 's'
-}
-
-int armazenaValor(int valor, int *vetor, int max, int posicao) {
-	if (posicao < max) {         // verifica se a posição é válida
-		vetor[posicao] = valor;  // armazena o valor no vetor
-		return posicao + 1;      // retorna a próxima posição
+class Utils {
+public:
+	static int percentual(int valor, int min, int max) {
+		/*
+		exemplo: converteSensor(30, 0, 100) = 30
+		calculo para normalizar e converter para o intervalo:
+		(30 - 0) * 100 / (100 - 0) = percentual
+		(30 - 0) * 100 / 100 = percentual
+		30 * 100 / 100 = percentual
+		30 = percentual
+		*/
+		return (valor - min) * 100 / (max - min);
 	}
-	return posicao;  // retorna a posição atual (não alterada)
-}
 
-char *direcaoMenorCaminho(int *vetor, int *distancia) {
-	int index = 0;         // indice do vetor
-	int menor = vetor[0];  // menor valor do vetor, inicialmente o primeiro valor para comparar
+	static int armazenaValorVetor(int valor, int *vetor, int max, int posicao) {
+		if (posicao < max) {         // verifica se a posição é válida
+			vetor[posicao] = valor;  // armazena o valor no vetor
+			return posicao + 1;      // retorna a próxima posição
+		}
+		return posicao;  // retorna a posição atual (não alterada)
+	}
 
-	for (int i = 1; i < 4; i++) {  // percorre o vetor
-		if (vetor[i] < menor) {    // verifica se o valor atual é menor que o menor valor
-			menor = vetor[i];      // atualiza o menor valor
-			index = i;             // atualiza o indice do menor valor
+	static char *direcaoMaiorCaminho(int *vetor, int *distancia) {
+		int index = 0;         // indice do vetor
+		int maior = vetor[0];  // maior valor do vetor, inicialmente o primeiro valor para comparar
+
+		// percorre o vetor
+		for (int i = 1; i < 4; i++) {
+			if (vetor[i] > maior) {  // verifica se o valor atual é maior que o maior valor
+				maior = vetor[i];    // atualiza o maior valor
+				index = i;           // atualiza o indice do maior valor
+			}
+		}
+
+		*distancia = maior;                                             // armazena o maior valor no ponteiro
+		return index < 4 ? direcoes[index] : (char *)"Nao encontrado";  // retorna a direção do maior va
+	}
+};
+
+template <typename TipoEntrada>
+class Entrada {
+public:
+	char *texto;
+	Entrada(char *texto) { this->texto = texto; }
+
+	TipoEntrada ler() {
+		TipoEntrada valor;      // variavel para armazenar o valor lido
+		printf("%s: ", texto);  // imprime o texto
+		cin >> valor;           // lê o valor
+		return valor;           // retorna o valor lido
+	}
+};
+
+struct Leitura {
+	int valor;
+	int percentual;
+	int min, max;
+
+	Leitura(int valor, int min, int max) {
+		// inicializa as variáveis
+		this->valor = valor;
+		this->min = min;
+		this->max = max;
+		this->percentual = Utils::percentual(valor, min, max);  // calcula o percentual
+	}
+};
+
+class Sensor {
+public:
+	int min;
+	int max;
+	char *direcao;
+
+	Sensor(int min, int max, char *direcao) {
+		// inicializa os atributos
+		this->min = min;
+		this->max = max;
+		this->direcao = direcao;
+	}
+
+	Leitura ler() {
+		char texto[50];                                                // define o texto a ser exibido na entrada
+		sprintf(texto, "Digite o valor do sensor %s", this->direcao);  // concatena o texto com a direção do sensor
+
+		Entrada<int> entradaSensor(texto);  // cria o objeto para ler o valor do sensor
+		int valor = entradaSensor.ler();    // faz a leitura do valor
+
+		return Leitura(valor, min, max);  // retorna a estrutura de dados
+	}
+};
+
+class Robo {
+public:
+	int *vetorDistancias;
+	int posicao;
+	bool dirigindo;
+
+	Robo() {
+		this->vetorDistancias = new int[4];  // aloca o vetor de distancias
+		this->posicao = 0;                   // inicializa a posição do vetor
+		this->dirigindo = true;              // inicializa o estado do robô
+	}
+
+	void lerSensores() {
+		this->posicao = 0;  // inicializa a posição do vetor
+
+		Sensor sensorFrente(0, 100, (char *)"Frente");      // cria o objeto sensor para a frente
+		Sensor sensorTras(0, 100, (char *)"Tras");          // cria o objeto sensor para a tras
+		Sensor sensorEsquerda(0, 100, (char *)"Esquerda");  // cria o objeto sensor para a esquerda
+		Sensor sensorDireita(0, 100, (char *)"Direita");    // cria o objeto sensor para a direita
+
+		Leitura leituraFrente = sensorFrente.ler();      // faz a leitura do sensor da frente
+		Leitura leituraTras = sensorTras.ler();          // faz a leitura do sensor da tras
+		Leitura leituraEsquerda = sensorEsquerda.ler();  // faz a leitura do sensor da esquerda
+		Leitura leituraDireita = sensorDireita.ler();    // faz a leitura do sensor da direita
+
+		// armazena os valores no vetor de distancias
+		this->posicao = Utils::armazenaValorVetor(leituraFrente.percentual, this->vetorDistancias, 4, this->posicao);
+		this->posicao = Utils::armazenaValorVetor(leituraTras.percentual, this->vetorDistancias, 4, this->posicao);
+		this->posicao = Utils::armazenaValorVetor(leituraEsquerda.percentual, this->vetorDistancias, 4, this->posicao);
+		this->posicao = Utils::armazenaValorVetor(leituraDireita.percentual, this->vetorDistancias, 4, this->posicao);
+	}
+
+	void verificaContinuar() {
+	verificar_continuar_repetir:
+		Entrada<char> entrada_continuar((char *)"Deseja continuar o mapeamento? (s/n)");  // cria o objeto para ler a resposta
+		char resposta = entrada_continuar.ler();                                          // faz a leitura da resposta
+
+		switch (resposta) {
+			case 's':
+				this->dirigindo = true;
+				break;
+			case 'n':
+				this->dirigindo = false;
+				break;
+			default:
+				printf("Resposta inválida, digite novamente.\n");
+				goto verificar_continuar_repetir;
+				break;
 		}
 	}
 
-	*distancia = menor;  // atualiza a variável distancia com o menor valor
+	int dirigir(int *vetorSaida, int maxVetor) {
+		int posAtualVetor = 0;  // posição atual do vetor de movimentos
 
-	return index < 4 ? direcoes[index] : (char *)"Nao encontrado";  // retorna a direção do menor valor
-}
+		while (this->dirigindo) {                               // enquanto o robô estiver dirigindo
+			printf("Mapeamento #%d\n", posAtualVetor / 4 + 1);  // exibe o número do mapeamento
+			this->lerSensores();                                // le o sensor
 
-int dirige(int *v, int maxv) {
-	int maxVetor = maxv;    // tamanho máximo do vetor
-	int *vetorMov = v;      // vetor de movimentos
-	int posAtualVetor = 0;  // posição atual do vetor de movimentos
-	int dirigindo = 1;      // flag para saber se o robô está dirigindo
+			for (int i = 0; i < 4; i++) {  // percorre o vetor de distancias
+				posAtualVetor = Utils::armazenaValorVetor(this->vetorDistancias[i], vetorSaida, maxVetor,
+				                                          posAtualVetor);  // armazena o valor no vetor de movimentos
+			}
 
-	while (dirigindo) {                                                                // enquanto o robô estiver dirigindo
-		printf("Mapeamento #%d\n", posAtualVetor + 1);                                 // imprime o número do mapeamento
-		for (int i = 0; i < 4; i++) {                                                  // percorre as direções
-			int medida = leSensor(direcoes[i]);                                        // le o sensor
-			medida = converteSensor(medida, 0, 100);                                   // converte o valor do sensor para o intervalo de 0 a 100
-			posAtualVetor = armazenaValor(medida, vetorMov, maxVetor, posAtualVetor);  // armazena o valor no vetor
+			this->verificaContinuar();  // verifica se o usuário deseja continuar
 		}
-		dirigindo = leComando();  // verifica se o usuário deseja continuar
+
+		return posAtualVetor;  // retorna a posição atual do vetor
 	}
-	return posAtualVetor;  // retorna a posição atual do vetor
-}
 
-// O trecho abaixo irá utilizar as funções acima para ler os sensores e o
-// movimento do robô e no final percorrer o vetor e mostrar o movimento a cada
-// direção baseado na maior distância a cada movimento
-void percorre(int *v, int tamPercorrido) {
-	int *vetorMov = v;  // vetor de movimentos
-	int maiorDir = 0;   // maior valor da direção
+	void percorre(int *v, int tamPercorrido) {
+		int *vetorMov = v;  // vetor de movimentos
 
-	for (int i = 0; i < tamPercorrido; i += 4) {                         // percorre o vetor de movimentos
-		char *direcao = direcaoMenorCaminho(&(vetorMov[i]), &maiorDir);  // calcula a direção do menor caminho
+		for (int i = 0; i < tamPercorrido; i += 4) {  // percorre o vetor de movimentos
+			// exibe os valores do vetor de movimentos em debug
+			DBG_INFO("i: %d, vetorMov[i]: %d, vetorMov[i + 1]: %d, vetorMov[i + 2]: %d, vetorMov[i + 3]: %d\n", i, vetorMov[i], vetorMov[i + 1],
+			         vetorMov[i + 2], vetorMov[i + 3]);
 
-		// foi utilizado a variavel global "direcoes" para mostrar a direção de forma mais amigável
-		// o numero do mapeamento é calculado dividindo o indice do vetor pelo tamanho de cada mapeamento
-		printf("#%d - Direcao: %s, Distancia: %d\n", i / 4 + 1, direcao, maiorDir);  // imprime a direção e a maior distância
+			int maiorDir;                                                         // variavel para armazenar maior valor do sensor
+			char *direcao = Utils::direcaoMaiorCaminho(&vetorMov[i], &maiorDir);  // pega a direção do maior valor
+
+			// O numero do mapeamento atual é dado
+			// pela divisão da posição atual do vetor de movimentos pelo tamanho do vetor de distancias
+			printf("#%d - Direcao: %s, Distancia: %d\n", i / 4 + 1, direcao, maiorDir);  // imprime a direção e a maior distância
+		}
 	}
-}
+};
 
 int main(int argc, char **argv) {
 	int maxVetor = 100;          // tamanho máximo do vetor
 	int vetorMov[maxVetor * 4];  // vetor de movimentos
 	int posAtualVet = 0;         // posição atual do vetor de movimentos
 
-	posAtualVet = dirige(vetorMov, maxVetor);  // dirige o robô e retorna a posição atual do vetor de movimentos
-	percorre(vetorMov, posAtualVet);           // percorre o vetor de movimentos e mostra o movimento a cada direção
+	// Mock de um robô que faz o mapeamento
+	Robo robo;  // cria o objeto robo
+
+	posAtualVet = robo.dirigir(vetorMov, maxVetor);  // faz o mapeamento
+	DBG_INFO("Tamanho do vetor de movimentos: %d\n", posAtualVet);
+	robo.percorre(vetorMov, posAtualVet);  // percorre o mapeamento
 
 	return 0;  // fim do programa
 }
