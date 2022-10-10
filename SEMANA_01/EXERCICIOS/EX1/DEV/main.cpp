@@ -126,21 +126,13 @@ public:
 	void lerSensores() {
 		this->posicao = 0;  // inicializa a posição do vetor
 
-		Sensor sensorDireita(0, 100, (char *)"Direita");    // cria o objeto sensor para a direita
-		Sensor sensorEsquerda(0, 100, (char *)"Esquerda");  // cria o objeto sensor para a esquerda
-		Sensor sensorFrente(0, 100, (char *)"Frente");      // cria o objeto sensor para a frente
-		Sensor sensorTras(0, 100, (char *)"Tras");          // cria o objeto sensor para a tras
+		for (int i = 0; i < 4; i++) {            // percorre os sensores
+			Sensor sensor(0, 100, direcoes[i]);  // cria o objeto sensor
+			Leitura leitura = sensor.ler();      // faz a leitura do sensor
 
-		Leitura leituraFrente = sensorFrente.ler();      // faz a leitura do sensor da frente
-		Leitura leituraDireita = sensorDireita.ler();    // faz a leitura do sensor da direita
-		Leitura leituraEsquerda = sensorEsquerda.ler();  // faz a leitura do sensor da esquerda
-		Leitura leituraTras = sensorTras.ler();          // faz a leitura do sensor da tras
-
-		// armazena os valores no vetor de distancias
-		this->posicao = Utils::armazenaValorVetor(leituraDireita.percentual, this->vetorDistancias, 4, this->posicao);
-		this->posicao = Utils::armazenaValorVetor(leituraEsquerda.percentual, this->vetorDistancias, 4, this->posicao);
-		this->posicao = Utils::armazenaValorVetor(leituraFrente.percentual, this->vetorDistancias, 4, this->posicao);
-		this->posicao = Utils::armazenaValorVetor(leituraTras.percentual, this->vetorDistancias, 4, this->posicao);
+			// armazena o valor do sensor no vetor de distancias
+			this->posicao = Utils::armazenaValorVetor(leitura.valor, this->vetorDistancias, 4, this->posicao);
+		}
 	}
 
 	void verificaContinuar() {
