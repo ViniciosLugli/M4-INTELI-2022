@@ -15,7 +15,7 @@
 using namespace std;
 
 // variavel global
-char *direcoes[4] = {(char *)"Direita", (char *)"Esquerda", (char *)"Frente", (char *)"Tras"};
+char* direcoes[4] = {(char*)"Direita", (char*)"Esquerda", (char*)"Frente", (char*)"Tras"};
 
 class Utils {
 public:
@@ -31,7 +31,7 @@ public:
 		return (valor - min) * 100 / (max - min);
 	}
 
-	static int armazenaValorVetor(int valor, int *vetor, int max, int posicao) {
+	static int armazenaValorVetor(int valor, int* vetor, int max, int posicao) {
 		if (posicao < max) {         // verifica se a posição é válida
 			vetor[posicao] = valor;  // armazena o valor no vetor
 			return posicao + 1;      // retorna a próxima posição
@@ -39,7 +39,7 @@ public:
 		return posicao;  // retorna a posição atual (não alterada)
 	}
 
-	static char *direcaoMaiorCaminho(int *vetor, int *distancia) {
+	static char* direcaoMaiorCaminho(int* vetor, int* distancia) {
 		int index = 0;         // indice do vetor
 		int maior = vetor[0];  // maior valor do vetor, inicialmente o primeiro valor para comparar
 
@@ -51,16 +51,16 @@ public:
 			}
 		}
 
-		*distancia = maior;                                             // armazena o maior valor no ponteiro
-		return index < 4 ? direcoes[index] : (char *)"Nao encontrado";  // retorna a direção do maior va
+		*distancia = maior;                                            // armazena o maior valor no ponteiro
+		return index < 4 ? direcoes[index] : (char*)"Nao encontrado";  // retorna a direção do maior va
 	}
 };
 
 template <typename TipoEntrada>
 class Entrada {
 public:
-	char *texto;
-	Entrada(char *texto) {
+	char* texto;
+	Entrada(char* texto) {
 		// inicializa o texto da entrada
 		this->texto = texto;
 	}
@@ -91,9 +91,9 @@ class Sensor {
 public:
 	int min;
 	int max;
-	char *direcao;
+	char* direcao;
 
-	Sensor(int min, int max, char *direcao) {
+	Sensor(int min, int max, char* direcao) {
 		// inicializa os atributos
 		this->min = min;
 		this->max = max;
@@ -113,7 +113,7 @@ public:
 
 class Robo {
 public:
-	int *vetorDistancias;
+	int* vetorDistancias;
 	int posicao;
 	bool dirigindo;
 
@@ -137,8 +137,8 @@ public:
 
 	void verificaContinuar() {
 	verificar_continuar_repetir:
-		Entrada<char> entrada_continuar((char *)"Deseja continuar o mapeamento? (s/n)");  // cria o objeto para ler a resposta
-		char resposta = entrada_continuar.ler();                                          // faz a leitura da resposta
+		Entrada<char> entrada_continuar((char*)"Deseja continuar o mapeamento? (s/n)");  // cria o objeto para ler a resposta
+		char resposta = entrada_continuar.ler();                                         // faz a leitura da resposta
 
 		switch (resposta) {  // verifica a resposta
 			case 's':        // se for sim
@@ -154,7 +154,7 @@ public:
 		}
 	}
 
-	int dirigir(int *vetorSaida, int maxVetor) {
+	int dirigir(int* vetorSaida, int maxVetor) {
 		int posAtualVetor = 0;  // posição atual do vetor de movimentos
 
 		while (this->dirigindo) {                               // enquanto o robô estiver dirigindo
@@ -172,8 +172,8 @@ public:
 		return posAtualVetor;  // retorna a posição atual do vetor
 	}
 
-	void percorre(int *v, int tamPercorrido) {
-		int *vetorMov = v;  // vetor de movimentos
+	void percorre(int* v, int tamPercorrido) {
+		int* vetorMov = v;  // vetor de movimentos
 
 		for (int i = 0; i < tamPercorrido; i += 4) {  // percorre o vetor de movimentos
 			// exibe os valores do vetor de movimentos em debug
@@ -181,7 +181,7 @@ public:
 			         vetorMov[i + 2], vetorMov[i + 3]);
 
 			int maiorDir;                                                         // variavel para armazenar maior valor do sensor
-			char *direcao = Utils::direcaoMaiorCaminho(&vetorMov[i], &maiorDir);  // pega a direção do maior valor
+			char* direcao = Utils::direcaoMaiorCaminho(&vetorMov[i], &maiorDir);  // pega a direção do maior valor
 
 			// O numero do mapeamento atual é dado
 			// pela divisão da posição atual do vetor de movimentos pelo tamanho do vetor de distancias
@@ -190,7 +190,7 @@ public:
 	}
 };
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 	int maxVetor = 100;          // tamanho máximo do vetor
 	int vetorMov[maxVetor * 4];  // vetor de movimentos
 	int posAtualVet = 0;         // posição atual do vetor de movimentos
