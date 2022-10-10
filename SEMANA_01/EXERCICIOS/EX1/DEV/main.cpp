@@ -2,7 +2,7 @@
 #include <string>
 
 // Definindo o tipo de execução
-//#define DEBUG
+//	#define DEBUG
 
 // define funções para debug
 #ifdef DEBUG
@@ -60,7 +60,10 @@ template <typename TipoEntrada>
 class Entrada {
 public:
 	char *texto;
-	Entrada(char *texto) { this->texto = texto; }
+	Entrada(char *texto) {
+		// inicializa o texto da entrada
+		this->texto = texto;
+	}
 
 	TipoEntrada ler() {
 		TipoEntrada valor;      // variavel para armazenar o valor lido
@@ -145,14 +148,14 @@ public:
 		Entrada<char> entrada_continuar((char *)"Deseja continuar o mapeamento? (s/n)");  // cria o objeto para ler a resposta
 		char resposta = entrada_continuar.ler();                                          // faz a leitura da resposta
 
-		switch (resposta) {
-			case 's':
+		switch (resposta) {  // verifica a resposta
+			case 's':        // se for sim
 				this->dirigindo = true;
 				break;
-			case 'n':
+			case 'n':  // se for não
 				this->dirigindo = false;
 				break;
-			default:
+			default:  // se for qualquer outra coisa
 				printf("Resposta inválida, digite novamente.\n");
 				goto verificar_continuar_repetir;
 				break;
