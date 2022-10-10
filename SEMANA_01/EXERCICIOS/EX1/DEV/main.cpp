@@ -2,7 +2,7 @@
 #include <string>
 
 // Definindo o tipo de execução
-#define DEBUG
+//#define DEBUG
 
 // define funções para debug
 #ifdef DEBUG
