@@ -4,3 +4,4 @@
 # Compiled files
 *.o
 main
+build/
