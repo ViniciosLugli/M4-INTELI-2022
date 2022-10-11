@@ -30,15 +30,15 @@ public:
 		va_end(args);                   // finaliza a lista de argumentos
 
 		/*
-		está sendo utilizado o ets_printf para escrever no console
-		pois não é seguro o uso do serial.Print durante interrupções,
+		caso seja utilizado em interrupções, é recomendado o uso do ets_printf
+		para escrever no console, pois não é seguro o uso do serial.Print durante interrupções,
 		é causado um crash(abort) no ESP32, já que é uma função
 		que utiliza de um buffer interno fechado para escrita.
 
 		como pode ser visto na referência:
 		https://esp32.com/viewtopic.php?f=13&t=3748&p=17131
 		*/
-		ets_printf(F(buffer));  // escreve o texto formatado no buffer
+		Serial.print(F(buffer));  // escreve o texto formatado no buffer
 	}
 };
 
@@ -278,7 +278,7 @@ void loop() {
 				display.print(String(nota));
 				display.setCursor(LARGURA_DISPLAY / 2 - 52, ALTURA_DISPLAY / 2 + 10);  // define a posição do cursor
 				display.print(F("Valor LDR: "));                                       // escreve o valor do LDR no display
-				display.print(String(valorLDR));
+				display.print(String(valoresLDR[i]));
 				display.display();            // atualiza o display
 				buzzer.tocarNota(nota, 200);  // toca o buzzer por 200ms
 				delay(300);                   // aguarda 300ms
