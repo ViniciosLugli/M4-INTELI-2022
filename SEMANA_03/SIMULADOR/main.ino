@@ -3,6 +3,9 @@
 Notas de uso:
 Botão azul ( porta 26 ) faz o salvamento do valor no vetor após a leitura do sensor ( leds binários )
 Botão verde ( porta 25 ) reproduz os sons dos valores no final da leitura do sensor ( leds binários )
+
+O uso da função 'F' em strings é para economizar memória RAM,
+pois as strings são armazenadas na memória FLASH do microcontrolador, e não na RAM.
 */
 
 #include <Adafruit_SSD1306.h>
