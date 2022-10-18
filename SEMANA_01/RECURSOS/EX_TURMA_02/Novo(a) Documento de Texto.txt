@@ -1,0 +1,4 @@
+Temos um problema de armazenamento e busca de itens em uma escola. Vamos assumir que cada item tem um identificador que pode ser um número de 00 a 99. Cada sala da escola será representada por um vetor em C. Faça um programa com as seguintes características:
+1 – Uma função que leia continuamente do usuário o código do item a ser inserido e a sala (de 1 a 5) e insere. Alem disso,
+2 – Se o usuário selecionar “B” ele deve chamar uma função que lê um número, vasculha cada uma das “salas” e retorna um outro vetor com a lista de salas onde o código pode ser encontrado.
+3 – Se ele selecionar “P” ele deve parar a busca.
