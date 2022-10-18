@@ -121,16 +121,16 @@ public:
 			valorDecimal = 5
 
 			led 0:
-			5 & (1 << 0) = 5 & 1 = 1, pois 0101 & 0001 = 0001
+			5 & (1 << 0) = 5 & 1 = 1, pois 0101 & 0001 = 0001 // led 0 está ligado
 
 			led 1:
-			5 & (1 << 1) = 5 & 2 = 0, pois 0101 & 0010 = 0000
+			5 & (1 << 1) = 5 & 2 = 0, pois 0101 & 0010 = 0000 // led 1 está desligado
 
 			led 2:
-			5 & (1 << 2) = 5 & 4 = 4, pois 0101 & 0100 = 0100
+			5 & (1 << 2) = 5 & 4 = 4, pois 0101 & 0100 = 0100 // led 2 está ligado
 
 			led 3:
-			5 & (1 << 3) = 5 & 8 = 0, pois 0101 & 1000 = 0000
+			5 & (1 << 3) = 5 & 8 = 0, pois 0101 & 1000 = 0000 // led 3 está desligado
 
 			o if verifica se o resultado é diferente de zero, se for diferente de zero, o led é ligado
 			*/
