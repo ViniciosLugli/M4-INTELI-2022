@@ -1,10 +1,16 @@
 #include <iostream>
 #include <string>
 
+/*
+
+    TIP:
+        Foi utilizado os marcadores em comentários para sinalizar qual item está associado o código.
+*/
+
 // Definindo o tipo de execução
 //	#define DEBUG
 
-// define funções para debug
+// define funções para debug caso o tipo de execução seja DEBUG
 #ifdef DEBUG
 	#define DBG_INFO(...) printf("INFO: " __VA_ARGS__)
 #else
@@ -19,6 +25,9 @@ char* direcoes[4] = {(char*)"Direita", (char*)"Esquerda", (char*)"Frente", (char
 
 class Utils {
 public:
+	/*
+	    EXERCÍCIO ÍTEM 1 ------------------------------------
+	*/
 	static int percentual(int valor, int min, int max) {
 		/*
 		exemplo: converteSensor(30, 0, 100) = 30
@@ -31,6 +40,10 @@ public:
 		return (valor - min) * 100 / (max - min);
 	}
 
+	/*
+	    EXERCÍCIO ÍTEM 3 ------------------------------------
+	    FAZ A CONVERSÃO DO VALOR ENTRE MEDIDAS EXTREMAS
+	*/
 	static int armazenaValorVetor(int valor, int* vetor, int max, int posicao) {
 		if (posicao < max) {         // verifica se a posição é válida
 			vetor[posicao] = valor;  // armazena o valor no vetor
@@ -39,6 +52,10 @@ public:
 		return posicao;  // retorna a posição atual (não alterada)
 	}
 
+	/*
+	    EXERCÍCIO ÍTEM 4 ------------------------------------
+	    COM BASE NO VETOR, ENCONTRA O MAIOR VALOR E RETORNA A DIREÇÃO, ATRIBUINDO O VALOR A UM PONTEIRO DADO NOS PARÂMETROS
+	*/
 	static char* direcaoMaiorCaminho(int* vetor, int* distancia) {
 		int index = 0;         // indice do vetor
 		int maior = vetor[0];  // maior valor do vetor, inicialmente o primeiro valor para comparar
@@ -56,6 +73,10 @@ public:
 	}
 };
 
+/*
+    EXERCÍCIO ÍTEM 2 ------------------------------------
+    RESGATE DE INFORMAÇÃO POR INPUT DO USUÁRIO
+*/
 template <typename TipoEntrada>
 class Entrada {
 public:
@@ -78,6 +99,10 @@ struct Leitura {
 	int percentual;
 	int min, max;
 
+	/*
+	    EXERCÍCIO ÍTEM 2 ------------------------------------
+	    FAZ O AJUSTE PERCENTUAL COM BASE NO INPUT DADO
+	*/
 	Leitura(int valor, int min, int max) {
 		// inicializa as variáveis
 		this->valor = valor;
@@ -87,6 +112,10 @@ struct Leitura {
 	}
 };
 
+/*
+    EXERCÍCIO ÍTEM 2 ------------------------------------
+    UTILIZA DAS CASSES PARA FAZER A LEITURA DO INPUT DO USUÁRIO E FAZER A CONVERSÃO DO VALOR PAPRA PERCENTUAL
+*/
 class Sensor {
 public:
 	int min;
@@ -135,6 +164,10 @@ public:
 		}
 	}
 
+	/*
+	    EXERCÍCIO ÍTEM 5 ------------------------------------
+	    FUNÇÃO QUE FAZ A LEITURA DO INPUT DO USUÁRIO PARA DETERMINAR SE O ROBÔ DEVE CONTINUAR DIRIGINDO OU NÃO
+	*/
 	void verificaContinuar() {
 	verificar_continuar_repetir:
 		Entrada<char> entrada_continuar((char*)"Deseja continuar o mapeamento? (s/n)");  // cria o objeto para ler a resposta
@@ -173,8 +206,8 @@ public:
 	}
 
 	void percorre(int* v, int tamPercorrido) {
-		int* vetorMov = v;  // vetor de movimentos
-
+		int* vetorMov = v;                            // vetor de movimentos
+		printf("Movimentos: \n");                     // imprime o texto
 		for (int i = 0; i < tamPercorrido; i += 4) {  // percorre o vetor de movimentos
 			// exibe os valores do vetor de movimentos em debug
 			DBG_INFO("i: %d, vetorMov[i]: %d, vetorMov[i + 1]: %d, vetorMov[i + 2]: %d, vetorMov[i + 3]: %d\n", i, vetorMov[i], vetorMov[i + 1],
