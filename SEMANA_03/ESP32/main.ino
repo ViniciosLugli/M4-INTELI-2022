@@ -8,7 +8,8 @@ O uso da função 'F' em strings é para economizar memória RAM,
 pois as strings são armazenadas na memória FLASH do microcontrolador, e não na RAM.
 */
 
-#include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SH1106.h>
 
 #define OLED_ENDERECO 0x3c   // OLED display endereço
 #define LARGURA_DISPLAY 128  // OLED display largura, em pixels
@@ -159,18 +160,18 @@ public:
 
 byte valorLDR = 0;  // valor do sensor LDR
 
-LDR ldr(15);          // cria o objeto do sensor LDR
-Buzzer buzzer(2, 0);  // cria o objeto do buzzer
+LDR ldr(2);            // cria o objeto do sensor LDR
+Buzzer buzzer(20, 0);  // cria o objeto do buzzer
 BitLeds bitLeds(new Led[4]{
 	// cria o objeto dos leds
-	Led(27),  // led 0
-	Led(14),  // led 1
-	Led(12),  // led 2
-	Led(13)   // led 3
+	Led(4),   // led 0
+	Led(17),  // led 1
+	Led(7),   // led 2
+	Led(3)    // led 3
 });
-Botao botaoSalvar(26);                                      // cria o objeto do botão de salvar
-Botao botaoLer(25);                                         // cria o objeto do botão de ler os valores
-Adafruit_SSD1306 display(LARGURA_DISPLAY, ALTURA_DISPLAY);  // cria o objeto do display
+Botao botaoSalvar(1);           // cria o objeto do botão de salvar
+Botao botaoLer(36);             // cria o objeto do botão de ler os valores
+Adafruit_SH1106 display(8, 9);  // cria o objeto do display
 
 int* valoresLDR;            // cria o vetor de valores ldr
 int posicaoValoresLDR = 0;  // posição atual do vetor
@@ -192,18 +193,16 @@ void setup() {
 	botaoSalvar.adicionarInterrupcao(callbackSalvarValor);  // adiciona a interrupção do botão salvar
 	botaoLer.adicionarInterrupcao(callbackLerValores);      // adiciona a interrupção do botão ler
 
-	if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ENDERECO)) {  // inicia o display
-		Serial.println(F("Falha ao iniciar o display"));
-		for (;;)
-			;  // loop infinito
-	} else {
-		display.clearDisplay();              // limpa o display
-		display.setTextColor(WHITE, BLACK);  // define a cor do texto, e a cor do fundo para sobrepor
-		display.setTextSize(1);              // define o tamanho da fonte
-		display.setCursor(0, 0);             // define a posição do cursor
-		display.println(F("Iniciando..."));  // escreve na tela
-		display.display();                   // atualiza o display
-	}
+	Console::escreverFormatado("Iniciando o display...\n");
+	display.begin(SH1106_SWITCHCAPVCC, OLED_ENDERECO);
+	Console::escreverFormatado("Display iniciado com sucesso!\n");
+	display.clearDisplay();              // limpa o display
+	display.setTextColor(WHITE, BLACK);  // define a cor do texto, e a cor do fundo para sobrepor
+	display.setTextSize(1);              // define o tamanho da fonte
+	display.setCursor(0, 0);             // define a posição do cursor
+	display.println(F("Iniciando..."));  // escreve na tela
+	display.display();                   // atualiza o display
+
 	delay(2000);             // aguarda 2 segundos
 	display.clearDisplay();  // limpa o display
 }
