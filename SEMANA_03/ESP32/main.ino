@@ -1,8 +1,8 @@
 
 /*
 Notas de uso:
-Botão azul ( porta 26 ) faz o salvamento do valor no vetor após a leitura do sensor ( leds binários )
-Botão verde ( porta 25 ) reproduz os sons dos valores no final da leitura do sensor ( leds binários )
+Botão azul ( porta 1 ) faz o salvamento do valor no vetor após a leitura do sensor ( leds binários )
+Botão verde ( porta 36 ) reproduz os sons dos valores no final da leitura do sensor ( leds binários )
 
 O uso da função 'F' em strings é para economizar memória RAM,
 pois as strings são armazenadas na memória FLASH do microcontrolador, e não na RAM.
@@ -269,7 +269,9 @@ void loop() {
 				display.print(String(nota));
 				display.setCursor(LARGURA_DISPLAY / 2 - 52, ALTURA_DISPLAY / 2 + 10);  // define a posição do cursor
 				display.print(F("Valor LDR: "));                                       // escreve o valor do LDR no display
-				display.print(String(valoresLDR[i]));
+				char valorLDRChar[4];
+				sprintf(valorLDRChar, "%02d", valoresLDR[i]);
+				display.print(valorLDRChar);
 				display.display();            // atualiza o display
 				buzzer.tocarNota(nota, 200);  // toca o buzzer por 200ms
 				delay(500);                   // aguarda 500ms
